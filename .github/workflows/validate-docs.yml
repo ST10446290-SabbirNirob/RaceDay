@@ -1,0 +1,44 @@
+name: RaceDay Part 1 Validation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-documentation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check README
+        run: |
+          test -f README.md
+          echo "README.md found"
+
+      - name: Check SQL database script
+        run: |
+          test -f docs/RaceDay_Database.sql
+          echo "RaceDay_Database.sql found"
+
+      - name: Check API endpoint plan
+        run: |
+          test -f docs/RaceDay_API_Endpoint_Plan.md
+          echo "RaceDay_API_Endpoint_Plan.md found"
+
+      - name: Check ERD
+        run: |
+          if find docs -maxdepth 1 -type f \( -iname "*ERD*.png" -o -iname "*ERD*.pdf" \) | grep -q .; then
+            echo "RaceDay ERD found"
+          else
+            echo "RaceDay ERD was not found"
+            exit 1
+          fi
+
+      - name: Validation complete
+        run: echo "RaceDay Part 1 documentation validation passed."
